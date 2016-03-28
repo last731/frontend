@@ -1,0 +1,612 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+    <form>
+        Алгоритм дийкстры
+        <input type="radio" name="lab" value="LAB 1" onclick="set(1)" />
+        <br> Задача комивояжера
+        <input type="radio" name="lab" value="LAB 2" onclick="set(2)" />
+    </form>
+    <div id='matrix'>
+
+    </div>
+    <br>
+    <br>
+
+    <br>
+    <form float="left">
+        Откуда
+        <input type="text" size="1" id="from" /> Куда
+        <input type="text" size="1" id="to" />
+        <input type="button" value="жмак" onclick="LAB1.find();" id="click">
+    </form>
+    <canvas height='900' width='900' id='canvas'>
+
+    </canvas>
+    <script type="text/javascript">
+        var mass = [];
+
+        function set(num) {
+            switch (num) {
+            case 1:
+                mass = [[0, 2, 3, 4, -1, -1, -1, -1, -1, -1, -1],
+                        [2, 0, -1, -1, -1, 5, -1, -1, -1, -1, -1],
+                		[3, -1, 0, -1, 4, -1, -1, -1, -1, 9, -1],
+                		[4, -1, -1, 0, -1, 6, 4, -1, -1, -1, -1],
+                		[-1, -1, 4, -1, 0, -1, -1, 5, 10, -1, 9],
+                		[-1, 5, -1, 6, -1, 0, -1, -1, 4, 5, -1],
+                		[-1, -1, -1, 4, -1, -1, 0, -1, -1, 8, -1],
+                		[-1, -1, -1, -1, 5, -1, -1, 0, -1, -1, 4],
+                		[-1, -1, -1, -1, 10, 4, -1, -1, 0, -1, 5],
+                		[-1, -1, 9, -1, -1, 5, 8, -1, -1, 0, 6],
+                		[-1, -1, -1, -1, 9, -1, -1, 4, 5, 6, 0], ];
+                createTable();
+                document.getElementById('click').onclick = LAB1.find;
+                document.getElementById('to').attributes.removeNamedItem('disabled');
+                break
+            case 2:
+                mass = [[Infinity, 48, 27, 31, 43],
+                                        [33, Infinity, 28, 44, 43],
+                                        [41, 28, Infinity, 40, 36],
+                                        [37, 35, 29, Infinity, 46],
+                                        [48, 48, 25, 29, Infinity]];
+                //                mass = [[Infinity, 10, 1, 100],
+                //                   [100, Infinity, 10, 100],
+                //                   [1, 100, Infinity, 10],
+                //                   [10, 100, 100, Infinity]];
+                createTable();
+                document.getElementById('click').onclick = LAB2.find;
+                document.getElementById('to').setAttribute('disabled', true);
+                break
+            }
+        }
+
+        var LAB1 = {};
+
+        LAB1.find = function () {
+            initColors();
+            var from = document.getElementById("from").value;
+            var to = document.getElementById("to").value;
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            LAB1.drawGraph(mass, LAB1.dijkstra(mass, from, to));
+        };
+
+
+        LAB1.drawGraph = function (mass, path) {
+            initColors();
+            if (path) {
+                var steps = path.split(";");
+                for (i = 1; i < steps.length; i++) {
+                    massColor[steps[i].split(" ")[0]][steps[i].split(" ")[1]] = "#0F0";
+                    massColor[steps[i].split(" ")[1]][steps[i].split(" ")[0]] = "#0F0";
+                }
+            }
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.textAlign = "center";
+            context.font = 'bold 30px sans-serif';
+            context.textBaseline = "middle"
+            var center = canvas.height / 2;
+            var step = (canvas.height) / mass.length;
+            var flag = true;
+
+            for (i = 0; i < mass.length; i++) {
+                if (i % 2 == 1) {
+                    flag = true;
+                } else {
+                    flag = false;
+                }
+                for (j = i; j < mass.length; j++) {
+                    if (mass[i][j] != -1 && mass[i][j] != 0) {
+                        LAB1.drawArc(i, j, flag, mass[i][j]);
+                    }
+                }
+            }
+
+            for (i = 0; i < mass.length; i++) {
+                context.beginPath();
+                context.arc(20 + i * step, center, 20, 0, 360, false);
+                context.fillStyle = "#000";
+                context.fill();
+                context.closePath();
+                context.beginPath();
+                context.fillStyle = "#F00";
+                context.fillText(i, 20 + i * step, center);
+                context.closePath();
+            }
+        };
+
+
+        LAB1.drawArc = function (one, two, rand, text, slow) {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var center = canvas.height / 2;
+            var step = (canvas.height) / mass.length;
+            var distance = Math.abs(two - one);
+            var middle = (parseInt(two) + parseInt(one)) / 2;
+
+            if (rand) {
+                context.beginPath();
+                context.arc(20 + middle * step, center, step / 2 * distance, Math.PI, 0, false);
+                context.strokeStyle = massColor[one][two];
+                context.stroke();
+                context.closePath();
+                context.beginPath();
+                context.fillStyle = "#F00";
+                context.fillText(text, 20 + middle * step, center - step / 2 * distance - 15);
+                context.closePath();
+                if (massColor[one][two] === "#0F0") {
+                    context.beginPath();
+                    if ((one * 1) < (two * 1)) {
+                        context.moveTo(20 + middle * step + 5, center - step / 2 * distance);
+                        context.lineTo(20 + middle * step - 5, center - step / 2 * distance + 2);
+                        context.moveTo(20 + middle * step + 5, center - step / 2 * distance);
+                        context.lineTo(20 + middle * step - 5, center - step / 2 * distance - 2);
+                    } else {
+                        context.moveTo(20 + middle * step - 5, center - step / 2 * distance);
+                        context.lineTo(20 + middle * step + 5, center - step / 2 * distance + 2);
+                        context.moveTo(20 + middle * step - 5, center - step / 2 * distance);
+                        context.lineTo(20 + middle * step + 5, center - step / 2 * distance - 2);
+
+                    }
+                    context.stroke();
+                    context.closePath();
+                }
+            } else {
+                context.beginPath();
+                context.arc(20 + middle * step, center, step / 2 * distance, 0, Math.PI, false);
+                context.strokeStyle = massColor[one][two];
+                context.stroke();
+                context.closePath();
+                context.beginPath();
+                context.fillStyle = "#F00";
+                context.fillText(text, 20 + middle * step, center + step / 2 * distance + 15);
+                context.closePath();
+                if (massColor[one][two] === "#0F0") {
+                    context.beginPath();
+                    if ((one * 1) < (two * 1)) {
+                        context.moveTo(20 + middle * step + 5, center + step / 2 * distance);
+                        context.lineTo(20 + middle * step - 5, center + step / 2 * distance + 2);
+                        context.moveTo(20 + middle * step + 5, center + step / 2 * distance);
+                        context.lineTo(20 + middle * step - 5, center + step / 2 * distance - 2);
+                    } else {
+                        context.moveTo(20 + middle * step - 5, center + step / 2 * distance);
+                        context.lineTo(20 + middle * step + 5, center + step / 2 * distance + 2);
+                        context.moveTo(20 + middle * step - 5, center + step / 2 * distance);
+                        context.lineTo(20 + middle * step + 5, center + step / 2 * distance - 2);
+
+                    }
+                    context.stroke();
+                    context.closePath();
+                }
+            }
+        };
+
+
+        LAB1.dijkstra = function (mass, st, end) {
+
+            var path = [];
+            var distance = [];
+            var visited = [];
+
+            for (i = 0; i < mass.length; i++) {
+                distance[i] = 10000;
+                visited[i] = false;
+                path[i] = "";
+            }
+            distance[st] = 0;
+            for (count = 0; count < mass.length - 1; count++) {
+                min = 10000;
+                for (i = 0; i < mass.length; i++)
+                    if (!visited[i] && distance[i] <= min) {
+                        min = distance[i];
+                        index = i;
+                    }
+                var u = index;
+                visited[u] = true;
+                for (i = 0; i < mass.length; i++) {
+                    if (!visited[i] && mass[u][i] != -1 && distance[u] != 10000 && distance[u] + mass[u][i] < distance[i]) {
+                        var temp = distance[u] + mass[u][i];
+                        if (temp < distance[i]) {
+                            path[i] = path[u] + ";" + u + " " + i;
+                        }
+                        distance[i] = temp;
+
+
+                    }
+                }
+
+            }
+            alert(path[end] + " length = " + distance[end]);
+            return path[end];
+        };
+
+        var LAB2 = {};
+
+        LAB2.find = function () {
+            initColors();
+            LAB2.lowerBound = 0;
+            LAB2.upperBound = Infinity;
+            LAB2.bestPath = [];
+            LAB2.pusher = 0;
+            var from = document.getElementById("from").value;
+            LAB2.treesAndBounds([from], []);
+            alert(JSON.stringify(" length = " + LAB2.upperBound));
+            LAB2.drawGraph(mass, LAB2.bestPath);
+        }
+
+        LAB2.alpha = [];
+
+        LAB2.betha = [];
+
+        LAB2.findMin = function (arr) {
+            var min = Infinity;
+            for (numb in arr) {
+                if (arr[numb] < min) {
+                    min = arr[numb];
+                }
+            }
+            return min;
+        };
+
+        LAB2.findMinID = function (arr) {
+            var min = Infinity;
+            var minN = -1;
+            for (numb in arr) {
+                if (arr[numb] < min) {
+                    min = arr[numb];
+                    minN = numb;
+                }
+            }
+            return minN;
+        };
+
+        LAB2.findAlphas = function (arr) {
+
+
+            for (var i = 0; i < mass.length; i++) {
+                LAB2.alpha[i] = LAB2.findMin(LAB2.mass[i]);
+            }
+
+            var name;
+            for (var i = 0; i < arr.length - 1; i++) {
+                LAB2.alpha[arr[i]] = 0;
+            }
+        };
+
+        LAB2.findBethas = function () {
+            var tempArr = [];
+            for (var i = 0; i < LAB2.mass.length; i++) {
+                for (var j = 0; j < LAB2.mass.length; j++) {
+                    if (j != i) {
+
+                        tempArr[j] = LAB2.mass[j][i] - LAB2.alpha[j];
+
+                    }
+                }
+                LAB2.betha[i] = LAB2.findMin(tempArr);
+                tempArr = [];
+            }
+        }
+
+        LAB2.createPair = function (from, to) {
+            return {
+                'from': from,
+                'to': to
+            }
+        }
+
+        LAB2.copyArray = function (arr) {
+            var arr2 = [];
+            for (name in arr) {
+                arr2[name] = arr[name].slice();
+            }
+            return arr2;
+        }
+
+        LAB2.findPath = function (arr, arrNeg) {
+            var pathArr = [];
+            var mass2 = LAB2.copyArray(mass);
+            pathArr = arr.slice();
+            if (arrNeg) {
+                for (name in arrNeg) {
+                    mass2[pathArr[pathArr.length - 1]][arrNeg[name]] = Infinity;
+                }
+            }
+
+
+            for (name in pathArr) {
+                for (var j = 0; j < mass2.length; j++) {
+                    mass2[j][pathArr[name]] = Infinity;
+                }
+            }
+            var pathArrLength = pathArr.length;
+            for (var i = 0; i < mass2.length - pathArrLength; i++) {
+                pathArr.push(LAB2.findMinID(mass2[pathArr[pathArr.length - 1]]));
+                for (var j = 0; j < mass2.length; j++) {
+                    mass2[j][pathArr[pathArr.length - 1]] = Infinity;
+                }
+            }
+            pathArr.push(pathArr[0]);
+
+            var sum = 0;
+            for (var i = 0; i < mass.length; i++) {
+                if (pathArr[i] === -1 || pathArr[i + 1] === -1) {
+                    sum += Infinity;
+                    break;
+                }
+                sum += mass[pathArr[i]][pathArr[i + 1]]
+            }
+
+            return {
+                'sum': sum,
+                'path': pathArr
+            };
+        }
+
+        LAB2.findLowerBound = function (arr, arrNeg) {
+            LAB2.mass = LAB2.copyArray(mass);
+            if (arr) {
+                for (var i = 0; i < arr.length - 1; i++) {
+                    for (name in LAB2.mass[i]) {
+                        LAB2.mass[arr[i]][name] = Infinity;
+                    }
+                    for (name in LAB2.mass) {
+                        LAB2.mass[name][arr[i + 1]] = Infinity;
+                    }
+
+                }
+            }
+            if (arr && arrNeg.length > 0) {
+                for (var i = 0; i < arrNeg.length; i++) {
+                    LAB2.mass[arr[arr.length - 1]][arrNeg[i]] = Infinity;
+                }
+            }
+            LAB2.findAlphas(arr);
+            LAB2.findBethas();
+
+            if (arr) {
+                for (var i = 1; i < arr.length; i++) {
+                    LAB2.betha[arr[i]] = 0;
+                }
+            }
+
+            var sum = 0;
+            for (name in LAB2.alpha) {
+                sum += LAB2.alpha[name];
+            }
+            for (name in LAB2.betha) {
+                sum += LAB2.betha[name];
+            }
+            if (arr) {
+                for (var i = 0; i < arr.length - 1; i++) {
+                    sum += mass[arr[i]][arr[i + 1]];
+                }
+            }
+            return sum;
+        }
+
+
+        LAB2.lowerBound = 0;
+        LAB2.upperBound = Infinity;
+        LAB2.bestPath = [];
+        LAB2.pusher = 0;
+
+        LAB2.treesAndBounds = function (arr, arrNeg) {
+            //  alert(JSON.stringify(arr) + "  " + JSON.stringify(arrNeg));
+            var lowerBound = LAB2.findLowerBound(arr, arrNeg);
+            if (lowerBound < LAB2.upperBound) {
+                var temp = LAB2.findPath(arr, arrNeg);
+                if (temp.sum < LAB2.upperBound) {
+                    LAB2.upperBound = temp.sum;
+                    LAB2.bestPath = temp.path;
+                }
+
+                //  alert(lowerBound + " " + temp.sum);
+                var arr1 = arr.slice();
+                var arr2 = arr.slice();
+
+                var arrNeg2 = arrNeg.slice();
+                var i = 0;
+                var flag = true;
+                while (flag && i < mass.length) {
+                    if (!in_array(i, arr) && !in_array(i, arrNeg)) {
+                        LAB2.pusher = i;
+                        flag = false;
+                    } else {
+                        i++;
+                    }
+                }
+
+                if (i === mass.length) {
+                    return;
+                }
+                arr1.push(LAB2.pusher);
+                arrNeg2.push(LAB2.pusher);
+                LAB2.treesAndBounds(arr1, []);
+                LAB2.treesAndBounds(arr2, arrNeg2);
+
+            }
+        }
+
+        LAB2.drawGraph = function (mass, path) {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            var angle = 2 * Math.PI / mass.length;
+            var centerX = canvas.width / 2;
+            var centerY = canvas.height / 2;
+
+            for (var i = 0; i < path.length - 1; i++) {
+                massColor[path[i]][path[i + 1]] = "#0F0";
+            }
+
+            var rad = centerY / 2;
+            context.font = 'bold 15px Comic Sans MS';
+            for (var i = 0; i < mass.length; i++) {
+                for (var j = 0; j < mass.length; j++) {
+                    if (i !== j) {
+                        context.beginPath();
+                        context.strokeStyle = massColor[i][j];
+                        var x1 = centerX + rad * Math.cos(i * angle);
+                        var x2 = centerX + rad * Math.cos(j * angle);
+                        var y1 = centerX + rad * Math.sin(i * angle);
+                        var y2 = centerX + rad * Math.sin(j * angle);
+                        context.moveTo(centerX + rad * Math.cos(i * angle), centerY + rad * Math.sin(i * angle));
+                        context.lineTo(centerX + rad * Math.cos(j * angle), centerY + rad * Math.sin(j * angle));
+                        context.stroke();
+                        context.closePath();
+
+                        context.beginPath();
+                        context.fillStyle = "#F00";
+                        context.fillText(mass[i][j], (((x1 + x2) / 2 + x1) / 2 + x1) / 2, (((y1 + y2) / 2 + y1) / 2 + y1) / 2);
+                        context.closePath();
+                    }
+                }
+            }
+
+            for (var i = 0; i < path.length; i++) {
+
+
+                context.beginPath();
+                context.strokeStyle = massColor[path[i]][path[i + 1]];
+                var x1 = centerX + rad * Math.cos(path[i] * angle);
+                var x2 = centerX + rad * Math.cos(path[i + 1] * angle);
+                var y1 = centerY + rad * Math.sin(path[i] * angle);
+                var y2 = centerY + rad * Math.sin(path[i + 1] * angle);
+                context.moveTo(centerX + rad * Math.cos(path[i] * angle), centerY + rad * Math.sin(path[i] * angle));
+                context.lineTo(centerX + rad * Math.cos(path[i + 1] * angle), centerY + rad * Math.sin(path[i + 1] * angle));
+                context.stroke();
+                var xa = (x2 + x1) / 2;
+                var ya = (y2 + y1) / 2;
+                context.moveTo(xa, ya);
+
+                var arcTan = Math.atan((y2 - y1) / (x2 - x1));
+
+                if ((x1 > x2 && y1 < y2) || x1 > x2 && y1 > y2) {
+                    context.lineTo(xa + 10 * Math.cos(arcTan + Math.PI / 180 * 15), ya + 10 * Math.sin(arcTan + Math.PI / 180 * 15));
+                    context.moveTo(xa, ya);
+                    context.lineTo(xa + 10 * Math.cos(arcTan - Math.PI / 180 * 15), ya + 10 * Math.sin(arcTan - Math.PI / 180 * 15));
+                    context.stroke();
+                } else if ((x1 < x2 && y1 > y2) || (x1 < x2 && y1 < y2)) {
+                    context.lineTo(xa - 10 * Math.cos(arcTan + Math.PI / 180 * 15), ya - 10 * Math.sin(arcTan + Math.PI / 180 * 15));
+                    context.moveTo(xa, ya);
+                    context.lineTo(xa - 10 * Math.cos(arcTan - Math.PI / 180 * 15), ya - 10 * Math.sin(arcTan - Math.PI / 180 * 15));
+                    context.stroke();
+                }
+
+                context.closePath();
+
+
+
+                //alert(Math.atan((y2 - y1) / (x2 - x1)) * 180);
+
+
+
+            }
+
+            context.font = 'bold 25px Comic Sans MS';
+            for (i = 0; i < mass.length; i++) {
+                context.beginPath();
+                context.arc(centerX + rad * Math.cos(i * angle), centerY + rad * Math.sin(i * angle), 15, 0, 360, false);
+                context.fillStyle = "#000";
+                context.fill();
+                context.closePath();
+                context.beginPath();
+                context.fillStyle = "#F00";
+                context.fillText(i, centerX + rad * Math.cos(i * angle) - 8, centerY + rad * Math.sin(i * angle) + 10);
+                context.closePath();
+            }
+        }
+
+        function in_array(needle, haystack, strict) { // Checks if a value exists in an array
+            // 
+            // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+
+            var found = false,
+                key, strict = !!strict;
+
+            for (key in haystack) {
+                if ((strict && haystack[key] === needle) || (!strict && haystack[key] == needle)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            return found;
+        }
+
+
+        // alert(LAB2.findMin([4, 5, 3, 6, 7]));
+
+
+        //  alert(LAB2.findLowerBound([0, 2], []) + "  " + LAB2.findPath([0, 2], []).sum);
+
+
+
+
+
+
+        var massColor = [];
+
+
+        function initColors() {
+            for (i = 0; i < mass.length; i++) {
+                massColor[i] = [];
+                for (j = 0; j < mass.length; j++) {
+                    massColor[i][j] = "#000";
+                }
+            }
+        }
+
+
+
+        function createTable() {
+            var table = document.createElement('table');
+            table.width = mass.length * 24;
+
+
+            for (i = 0; i < mass.length; i++) {
+                var row = document.createElement('tr');
+                for (j = 0; j < mass.length; j++) {
+                    var cell = document.createElement('td');
+                    var input = document.createElement('input');
+                    input.size = 1;
+                    input.id = i + " " + j;
+                    input.onchange = function () {
+                        return function (obj) {
+                            var i = obj.currentTarget.id.split(" ")[0];
+                            var j = obj.currentTarget.id.split(" ")[1];
+
+                            mass[i][j] = parseInt(obj.currentTarget.value);
+                            mass[j][i] = parseInt(obj.currentTarget.value);
+                            document.getElementById(j + " " + i).value = obj.currentTarget.value;
+
+                        }
+                    }();
+
+                    if (mass[i][j] != -1) {
+                        input.value = mass[i][j];
+                    }
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            document.getElementById('matrix').innerHTML = "";
+            document.getElementById('matrix').appendChild(table);
+
+
+        }
+        //        LAB1.drawGraph(mass);
+    </script>
+</body>
+
+</html>

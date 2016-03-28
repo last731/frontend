@@ -1,0 +1,246 @@
+<html>
+
+<head>
+    <title>Life</title>
+    <style type="text/css">
+        .canvas {
+            margin: 50px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        window.addEventListener("load", function () {
+            document.getElementById("canvas").addEventListener("click", addPoint);
+            //           testing();
+            strokeGrid();
+
+            prepareArr();
+
+
+            document.onkeyup = function (e) {
+                e = e || window.event;
+                if (e.keyCode === 13) {
+                    start();
+                }
+                return false;
+            }
+        });
+
+
+        function start() {
+            if (timerId == -1) {
+
+                timerId = setInterval(calcGeneration, 300);
+            } else {
+                prepareArr();
+                clearInterval(timerId);
+                timerId = -1;
+            }
+        }
+
+
+        var timerId = -1;
+
+        function prepareArr() {
+            clearGeneration();
+            for (var i = 0; i < document.getElementById("canvas").height / xStep; i++) {
+                arrNow[i] = [];
+                arrNext[i] = [];
+                for (var j = 0; j < document.getElementById("canvas").width / yStep; j++) {
+                    arrNow[i][j] = 0;
+                    arrNext[i][j] = 0;
+                }
+            }
+        }
+
+        //        function testing() {
+        //            prepareArr();
+        //            arrNow[1][0] = 1;
+        //            arrNow[2][1] = 1;
+        //            arrNow[0][2] = 1;
+        //            arrNow[1][2] = 1;
+        //            arrNow[2][2] = 1;
+        //            var d1 = new Date();
+        //            for (var i = 0; i < 200; i++) {
+        //                calcGeneration();
+        //            }
+        //            var d2 = new Date();
+        //            var dif = (d2.getSeconds() * 1000 + d2.getMilliseconds()) - (d1.getSeconds() * 1000 + d1.getMilliseconds());
+        //            alert(dif);
+        //
+        //        }
+
+        var xStep = 10;
+        var yStep = 10;
+
+        var arrNow = [];
+        var arrNext = [];
+
+        function addPoint(event) {
+            var coords = event.currentTarget.getBoundingClientRect();
+
+            var context = event.currentTarget.getContext("2d");
+
+            context.beginPath();
+
+            var x = ((event.clientX - coords.left) - (event.clientX - coords.left) % xStep);
+            var y = ((event.clientY - coords.top) - (event.clientY - coords.top) % yStep);
+
+            arrNow[x / xStep][y / yStep] = 1;
+            context.fillStyle = "#F00";
+            context.fillRect(x + 1, y + 1, xStep - 2, yStep - 2);
+
+            context.fill();
+
+        }
+
+
+
+
+
+        function calcGeneration() {
+            clearGeneration();
+            for (var x = 0; x < arrNow.length; x++) {
+                for (var y = 0; y < arrNow[x].length; y++) {
+                    arrNext[x][y] = 0;
+                    arrNext[x][y] = calcPoint(x, y);
+                }
+            }
+            for (var x = 0; x < arrNow.length; x++) {
+                for (var y = 0; y < arrNow[x].length; y++) {
+                    arrNow[x][y] = arrNext[x][y];
+                }
+            }
+            plotGeneration();
+        }
+
+
+
+        function clearGeneration() {
+            var context = document.getElementById("canvas").getContext("2d");
+            context.beginPath();
+            for (x in arrNow) {
+                for (y in arrNow[x]) {
+                    if (arrNow[x][y] === 1) {
+                        context.clearRect(x * xStep + 1, y * yStep + 1, xStep - 2, yStep - 2);
+                    }
+                }
+            }
+            context.closePath();
+        }
+
+        function plotGeneration() {
+            var context = document.getElementById("canvas").getContext("2d");
+            context.fillStyle = "#F00";
+            context.beginPath();
+            for (x in arrNow) {
+                for (y in arrNow[x]) {
+                    if (arrNow[x][y] === 1) {
+                        context.fillRect(x * xStep + 1, y * yStep + 1, xStep - 2, yStep - 2);
+                    }
+                }
+            }
+            context.fill();
+            context.closePath();
+        }
+
+
+
+        function calcPoint(x, y) {
+            x = parseInt(x);
+            y = parseInt(y);
+            var count = 0;
+            try {
+                if (x - 1 >= 0 && x + 1 <= 49) {
+                    if (arrNow[x - 1][y - 1] !== undefined && arrNow[x - 1][y - 1] === 1) {
+                        count++;
+                    }
+                    if (arrNow[x - 1][y] !== undefined && arrNow[x - 1][y] === 1) {
+                        count++;
+                    }
+                    if (arrNow[x - 1][y + 1] !== undefined && arrNow[x - 1][y + 1] === 1) {
+                        count++;
+                    }
+                    if (arrNow[x + 1][y - 1] !== undefined && arrNow[x + 1][y - 1] === 1) {
+                        count++;
+                    }
+
+                    if (arrNow[x][y - 1] !== undefined && arrNow[x][y - 1] === 1) {
+                        count++;
+                    }
+
+                    if (arrNow[x][y + 1] !== undefined && arrNow[x][y + 1] === 1) {
+                        count++;
+                    }
+
+                    if (arrNow[x + 1][y] !== undefined && arrNow[x + 1][y] === 1) {
+                        count++;
+                    }
+                    if (arrNow[x + 1][y + 1] !== undefined && arrNow[x + 1][y + 1] === 1) {
+                        count++;
+                    }
+                }
+
+            } catch (e) {
+                throw new Error((x + 1) + " " + (y + 1));
+            }
+            if (arrNow[x][y] !== 1) {
+                if (count === 3) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else if (arrNow[x][y] === 1) {
+                if (count < 2 || count > 3) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+
+        }
+
+
+        function strokeGrid() {
+
+
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext('2d');
+
+            context.beginPath();
+
+            var x = 0;
+            for (var i = 0; i <= canvas.width / xStep; i++) {
+                context.moveTo(x, 0);
+                context.lineTo(x, canvas.height);
+                x += xStep;
+            }
+
+            var y = 0;
+            for (var i = 0; i <= canvas.height / yStep; i++) {
+                context.moveTo(0, y);
+                context.lineTo(canvas.width, y);
+                y += yStep;
+            }
+
+            context.stroke();
+            context.closePath();
+
+        }
+    </script>
+
+
+</head>
+
+<body>
+    <div>Conway's Game of Life
+        <br>
+        <input type="button" value="start/stop" onclick="start();" class="button" />
+    </div>
+
+    <canvas class="canvas" width="500px" height="500px" id="canvas"></canvas>
+
+
+</body>
+
+</html>
