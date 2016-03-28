@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <title></title>
+    <script src="js/prefixfree.min.js"></script>
+    <script src="js/lib.js"></script>
+    <script src="js/onepagescroll.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/onepage-scroll.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .contacts {
+            position: relative;
+        }
+        
+        .placeContacts {
+            position: relative;
+            display: table;
+            align-content: center;
+        }
+        
+        .placeContacts p {
+            align-content: center;
+            text-align: center;
+        }
+        
+        #contentContainer {
+            position: relative;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #wrapper {
+            position: relative;
+            left: 0px;
+            transition: left .5s ease-in-out;
+        }
+        
+        .content {
+            float: left;
+            white-space: normal;
+            text-align: center;
+            /*           //background-color: red;*/
+            /*          //  padding-top: 70px;*/
+        }
+        
+        .content p {
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            opacity: .3;
+            font-size: 144px;
+            margin: 0;
+        }
+        
+        #itemOne {
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        #itemTwo {
+            background-image: url("http://www.kirupa.com/images/yellowSquare.png");
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        #itemThree {
+            background-image: url("http://www.kirupa.com/images/pinkSquare.png");
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        #itemFour {
+            background-image: url("http://www.kirupa.com/images/graySquare.png");
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        #navLinks {
+            transition: opacity .5s;
+            position: absolute;
+            text-align: center;
+            /*            width: 550px;*/
+            margin: auto;
+            z-index: 10;
+        }
+        
+        #navLinks ul {
+            margin: 0px;
+            padding: 0px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        
+        #navLinks ul li {
+            float: left;
+            width: 2em;
+            height: 2em;
+            text-align: center;
+            margin: 10px;
+            list-style: none;
+            cursor: pointer;
+            background-color: #CCCCCC;
+            padding: 5px;
+            border-radius: 50%;
+            background-image: url("http://www.kirupa.com/images/graySquare.png");
+            background-repeat: no-repeat;
+            background-size: contain;
+            box-shadow: 0 0 5px #CCCCCC;
+        }
+        
+        #navLinks ul li img {
+            width: 2em;
+            height: 2em;
+        }
+        
+        #navLinks ul li:hover {
+            background-color: #FFFF00;
+        }
+        
+        #navLinks ul li.active {
+            /*
+            background-color: #333333;
+            color: #FFFFFF;
+*/
+            outline-width: 7px;
+            box-shadow: 0 0 10px #CCCCCC;
+        }
+        
+        #navLinks ul li.active:hover {
+            background-color: #484848;
+            color: #FFFFFF;
+        }
+        /* Chrome, Safari, Opera */
+        
+        .canvasEl {
+            transition-property: height;
+            transition-duration: 2s;
+        }
+        
+        .small {
+            height: 8.2em;
+        }
+        
+        .logo {
+            position: absolute;
+            opacity: 0;
+            height: 8.2em;
+            transition-property: opacity;
+            transition-duration: 3s;
+        }
+        
+        .firstSlideColumn {
+            margin-top: 6em;
+            width: 33.3%;
+            align-content: center;
+            float: left;
+        }
+        
+        .firstSlideImage {
+            width: 10em;
+            height: 10em;
+            border-radius: 50%;
+            box-shadow: 0 0 5px black;
+        }
+        
+        .firstSlideImage:hover {
+            box-shadow: 0 0 10px black;
+        }
+    </style>
+</head>
+
+<body style="margin: 0px; overflow: hidden; background: rgb(0, 0, 0);">
+    <div class="main">
+        <section>
+            <canvas id="logo" class="logo"></canvas>
+            <canvas id="oldSkool" class="canvasEl" width="1680" height="900"></canvas>
+
+            <div id="contentContainer">
+                <div id="navLinks">
+                    <ul>
+                        <li class="itemLinks" data-pos=""></li>
+                        <li class="itemLinks" data-pos=""></li>
+                        <li class="itemLinks" data-pos=""></li>
+                        <li class="itemLinks" data-pos=""></li>
+                    </ul>
+                </div>
+                <div id="wrapper" style="left: 0px;">
+                    <div id="itemOne" class="content">
+                        <div class="firstSlideColumn">
+                            <img src="http://www.kirupa.com/images/yellowSquare.png" onclick="setClickedItem(-1);" class="firstSlideImage">
+                            <br>Person ONE
+                        </div>
+                        <div class="firstSlideColumn">
+                            <img src="http://www.kirupa.com/images/pinkSquare.png" onclick="setClickedItem(-2);" class="firstSlideImage">
+                            <br>Person TWO
+                        </div>
+                        <div class="firstSlideColumn">
+                            <img src="http://www.kirupa.com/images/graySquare.png" onclick="setClickedItem(-3);" class="firstSlideImage">
+                            <br>Person THREE
+                        </div>
+                    </div>
+                    <div id="itemTwo" class="content">
+
+
+                        <!-- your content for the second item goes here -->
+                    </div>
+                    <div id="itemThree" class="content">
+
+
+                        <!-- your content for the third item goes here -->
+                    </div>
+                    <div id="itemFour" class="content">
+
+
+                        <!-- your content for the fourth item goes here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div id="contacts" class="contacts">
+                <div class="placeContacts">
+                    <p>Киев, ул. Дегтяревская, 25а</p>
+                    <p>корп. 1, оф. 213</p>
+                    <p>
+                        +38(097) 606 99 86</p>
+                    <p>i.fell.art.i@gamil.com</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+        // just querying the DOM...like a boss!
+        var links = document.querySelectorAll(".itemLinks");
+        var wrapper = document.querySelector("#wrapper");
+        var content = document.querySelectorAll(".content");
+        var contentContainer = document.getElementById("contentContainer");
+        var navigation = document.getElementById("navLinks");
+        navigation.style.left = (document.documentElement.clientWidth - navigation.clientWidth) / 2 + "px";
+        navigation.style.opacity = 0;
+        //prevent default drag functionality
+        contentContainer.ondragstart = function () {
+            return false;
+        }
+
+
+
+        // slider drag functionality
+        contentContainer.addEventListener("mousedown", dragHandler);
+        contentContainer.addEventListener("touchstart", dragHandler);
+
+        var coordX = 0;
+
+        function dragHandler(e) {
+            // alert(e.target.id);
+            wrapper.style.transition = "none";
+            coordX = e.pageX || e.changedTouches[0].clientX;
+            var posX = parseInt(wrapper.style.left.substring(0, wrapper.style.left.length - 2));
+            document.onmousemove = function (e) {
+                wrapper.style.left = posX - coordX + e.pageX + "px";
+            }
+
+            document.addEventListener("touchmove", function (e) {
+                wrapper.style.left = posX - coordX + e.changedTouches[0].clientX + "px";
+            });
+
+            //end of drag, slide to direction of reset default
+            document.onmouseup = moveHandler;
+            document.ontouchend = moveHandler;
+            //  document.ontouchcancel = moveHandler;
+
+        }
+
+        function moveHandler(e) {
+            document.onmousemove = null;
+            document.ontouchmove = null;
+            document.onmouseup = null;
+            wrapper.style.transition = "left .5s ease-in-out";
+            var n = Math.floor(parseInt(wrapper.style.left.substring(0, wrapper.style.left.length - 2)) /
+                document.documentElement.clientWidth);
+            var pageX = e.pageX || e.changedTouches[0].clientX;
+            if (Math.abs(Math.abs(pageX) - Math.abs(coordX)) > 200) {
+                if (pageX > coordX) {
+                    if (n == 0) {
+                        n = -1;
+                    }
+                    setClickedItem(n + 1);
+                }
+                if (pageX < coordX) {
+                    if (-n == content.length) {
+                        n = 1 - content.length;
+                    }
+                    setClickedItem(n);
+                }
+            } else {
+                if (pageX > coordX) {
+                    setClickedItem(n + 1);
+                }
+                if (pageX < coordX) {
+                    if (Math.abs(n) == content.length) {
+                        n = 1 - content.length;
+                    }
+                    setClickedItem(n + 1);
+                }
+            }
+        }
+
+        // the activeLink provides a pointer to the currently displayed item
+        var activeLink = 0;
+
+        // setup the event listeners
+        for (var i = 0; i < links.length; i++) {
+            var link = links[i];
+            link.addEventListener('click', setClickedItem, false);
+
+            // identify the item for the activeLink
+            link.itemID = i;
+        }
+
+        // set first item as active
+        links[activeLink].classList.add("active");
+
+        function setClickedItem(e) {
+            removeActiveLinks();
+            if (typeof e === "number") {
+                var clickedLink = document.getElementById(e);
+            } else {
+                var clickedLink = e.target;
+            }
+            if (clickedLink.id != "0") {
+                navigation.style.opacity = 1;
+            } else {
+                navigation.style.opacity = 0;
+            }
+            activeLink = clickedLink.itemID;
+
+            changePosition(clickedLink);
+        }
+
+        function removeActiveLinks() {
+            for (var i = 0; i < links.length; i++) {
+                links[i].classList.remove("active");
+            }
+        }
+
+        // Handle changing the slider position as well as ensure
+        // the correct link is highlighted as being active
+        function changePosition(link) {
+            var position = link.getAttribute("data-pos");
+            wrapper.style.left = position;
+
+            link.classList.add("active");
+        }
+
+
+
+
+        window.requestAnimFrame = (function () {
+            return window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 10000);
+                };
+        })();
+        var db = document.body;
+        var c = document.getElementById('oldSkool');
+        var $ = c.getContext('2d');
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+        c.style.height = window.innerHeight + "px";
+        var resume;
+
+        var topP;
+        var leftP;
+
+        var timer;
+
+        var flag = true;
+        var flag2 = true;
+
+        function relay() {
+            if (flag) {
+                timer = setTimeout(function () {
+                    window.requestAnimFrame(relay);
+                    resume();
+                }, 50);
+            }
+
+        }
+
+
+
+        var curvesOpacity = 0.2;
+        resume = function () {
+            //$.globalCompositeOperation = "source-over";
+            $.shadowBlur = 0;
+            $.fillStyle = "hsla(0,0%,100%,0.4)";
+            $.fillRect(0, 0, w, h);
+            $.shadowColor = "hsla(0,0%,0%,0.2)";
+            $.shadowBlur = 9;
+            $.fillStyle = "hsla(0,0%,0%,1)";
+
+
+            for (var i = 0; i < _s.length; i++) {
+                t = _s[i];
+                if (i <= y) {
+                    if (i == y) {
+                        t = t.substr(0, x);
+                    }
+                    $.fillText(t, leftP, topP + i * getEmPixels() * 4.1);
+                }
+            }
+
+
+            if (y < _s.length) {
+                $.fillRect(leftP + $.measureText(_s[y].substr(0, x)).width, topP + y * getEmPixels() * 4.1 - getEmPixels() * 4.1, 10, getEmPixels() * 4.1);
+
+            }
+            if (y < _s.length - 1 && x >= _s[y].length) {
+                y++;
+                x = 0;
+            } else if (y == _s.length - 1 && x == _s[y].length - 1) {
+                y++;
+            }
+            x++;
+
+
+
+            if (y >= _s.length - 1) {
+                if (x > _s[_s.length - 1].length - 1) {
+                    $.lineWidth = 6;
+                    $.strokeStyle = "hsla(0,100%,40%," + curvesOpacity + ")";
+                    $.beginPath();
+
+                    $.moveTo(leftP - getEmPixels() * 4.1, topP - getEmPixels() * 2);
+                    $.quadraticCurveTo(leftP - getEmPixels() * 4.1, topP - 1.5 * getEmPixels() * 4.1, leftP + getEmPixels() * 4.1, topP - 1.5 * getEmPixels() * 4.1);
+
+                    $.moveTo(leftP - getEmPixels() * 4.1, topP + getEmPixels() * 2.5 * 4.1);
+                    $.quadraticCurveTo(leftP - getEmPixels() * 4.1, topP + 3.5 * getEmPixels() * 4.1, leftP + getEmPixels() * 4.1, topP + 3.5 * getEmPixels() * 4.1);
+
+                    $.moveTo(leftP + getEmPixels() * 4.1 + ww, topP + getEmPixels() * 2.5 * 4.1);
+                    $.quadraticCurveTo(leftP + getEmPixels() * 4.1 + ww, topP + 3.5 * getEmPixels() * 4.1, leftP - getEmPixels() * 4.1 + ww, topP + 3.5 * getEmPixels() * 4.1);
+
+                    $.stroke();
+                    if (curvesOpacity < 0.8) {
+                        curvesOpacity += 0.2;
+                    } else if (flag) {
+                        setTimeout(function () {
+                            db.style.overflow = "";
+
+                            var contacts = document.getElementById("contacts").style.height = document.documentElement.clientHeight + "px";
+                            // contacts.style.display = "block";
+
+                            wrapper.style.width = (document.documentElement.clientWidth * content.length) + "px";
+
+                            contentContainer.style.marginTop = getEmPixels() * 2 * 4.1 - 20 + "px";
+                            contentContainer.style.height = document.documentElement.clientHeight - getEmPixels() * 2 * 4.1 + "px";
+                            contentContainer.style.width = document.documentElement.clientWidth - 2 + "px";
+
+                            for (var i = 0; i < content.length; i++) {
+                                content[i].style.height = document.documentElement.clientHeight - getEmPixels() * 2 * 4.1 + "px";
+                                content[i].style.width = document.documentElement.clientWidth - 2 + "px";
+                                links[i].setAttribute("data-pos", -i * document.documentElement.clientWidth + "px");
+                                links[i].setAttribute("id", -i);
+                            }
+
+                            var logo = document.getElementById("logo");
+                            logo.width = document.documentElement.clientWidth - 2;
+                            logo.height = getEmPixels() * 2 * 4.1;
+                            $ = logo.getContext("2d");
+                            drawLogo();
+                            logo.style.opacity = 1;
+                            flag = false;
+
+
+                            c.style.height = 0 + "px";
+                            c.style.width = document.documentElement.clientWidth + "px";
+                            c.width = document.documentElement.clientWidth;
+                            onePageScroll(".main", {
+                                sectionContainer: "section", // sectionContainer accepts any kind of selector in case you don't want to use section
+                                easing: "ease", // Easing options accepts the CSS3 easing animation such "ease", "linear", "ease-in", 
+                                // "ease-out", "ease-in-out", or even cubic bezier value such as "cubic-bezier(0.175, 0.885, 0.420, 1.310)"
+                                animationTime: 1000, // AnimationTime let you define how long each section takes to animate
+                                pagination: true, // You can either show or hide the pagination. Toggle true for show, false for hide.
+                                updateURL: false, // Toggle this true if you want the URL to be updated automatically when the user scroll to each page.
+                                beforeMove: function (index) {}, // This option accepts a callback function. The function will be called before the page moves.
+                                afterMove: function (index) {}, // This option accepts a callback function. The function will be called after the page moves.
+                                loop: false, // You can have the page loop back to the top/bottom when the user navigates at up/down on the first/last page.
+                                keyboard: true, // You can activate the keyboard controls
+                                responsiveFallback: false // You can fallback to normal page scroll by defining the width of the browser in which
+                                    // you want the responsive fallback to be triggered. For example, set this to 600 and whenever 
+                                    // the browser's width is less than 600, the fallback will kick in.
+                            });
+
+                        }, 1000);
+                    }
+
+
+                }
+            }
+
+
+            if (y >= _s.length - 1) {
+                window.clearInterval();
+            }
+        }
+        var ww = 0;
+        var hh = 0;
+
+
+
+        function drawLogo() {
+
+            // c.style.height = getEmPixels * 4.1 * 2 + "px";
+
+
+            $.globalCompositeOperation = "source-over";
+            $.font = "4.1em/1 opaticue";
+            $.textBaseline = "bottom";
+            $.shadowColor = "hsla(0,0%,0%,0.2)";
+            $.shadowBlur = 9;
+            $.fillStyle = "hsla(0,0%,0%,1)";
+            var leftP = Math.floor((window.innerWidth - $.measureText(_s[0]).width) / 2);
+            $.fillText(_s[0], leftP, 1.5 * getEmPixels() * 4.1);
+
+
+            $.lineWidth = 6;
+            $.strokeStyle = "hsla(0,100%,40%," + "1" + ")";
+            $.beginPath();
+
+            $.moveTo(leftP - 0.5 * getEmPixels() * 4.1, 0.7 * getEmPixels() * 4.1);
+            $.quadraticCurveTo(leftP - 0.5 * getEmPixels() * 4.1, 0.2 * getEmPixels() * 4.1, leftP + getEmPixels() * 4.1, 0.2 * getEmPixels() * 4.1);
+
+            $.moveTo(leftP - 0.5 * getEmPixels() * 4.1, 1.4 * getEmPixels() * 4.1);
+            $.quadraticCurveTo(leftP - 0.5 * getEmPixels() * 4.1, 1.8 * getEmPixels() * 4.1, leftP + getEmPixels() * 4.1, 1.8 * getEmPixels() * 4.1);
+
+            $.moveTo(leftP + $.measureText(_s[0]).width + 0.5 * getEmPixels() * 4.1, 1.4 * getEmPixels() * 4.1);
+            $.quadraticCurveTo(leftP + $.measureText(_s[0]).width + 0.5 * getEmPixels() * 4.1, 1.8 * getEmPixels() * 4.1,
+                leftP + $.measureText(_s[0]).width + -getEmPixels() * 4.1, 1.8 * getEmPixels() * 4.1);
+
+            $.stroke();
+
+
+
+
+
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+
+
+
+
+            $.font = "4.1em/1 opaticue";
+            _s = document.getElementById("text").innerHTML.split(";");
+            for (var i = 0; i < _s.length; i++) {
+                if ($.measureText(_s[i]).width > ww) {
+                    ww = $.measureText(_s[i]).width;
+                }
+                hh = (i + 1) * getEmPixels() * 4.1;
+
+            }
+            topP = Math.floor((window.innerHeight - hh) / 2);
+            leftP = Math.floor((window.innerWidth - ww) / 2);
+            x = 0;
+            y = 0;
+            c.width = w = window.innerWidth;
+            c.height = h = window.innerHeight;
+            db.style.margin = 0;
+            db.style.background = "hsla(0,0%,100%,1)";
+            db.style.overflow = "hidden";
+            $.textBaseline = "bottom";
+            $.font = "4.1em/1 opaticue";
+            relay();
+        });
+    </script>
+    <!--Script to Relay!-->
+
+
+    <pre id="text" style="display:none;font:4.1em opaticue">FeelART Studio;    Философия Архитектуры;         Ваш индивидуальный уют;Студия дизайна и архитектуры</pre>
+
+
+</body>
+
+</html>
